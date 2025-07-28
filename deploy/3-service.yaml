@@ -29,7 +29,10 @@ metadata:
     application: patroni
     cluster-name: *cluster_name
 spec:
-  type: ClusterIP
+  # type: ClusterIP
+  # clusterIP: None
+  type: LoadBalancer
+  externalTrafficPolicy: Local
   ports:
   - port: 5432
     targetPort: 5432
