@@ -1,6 +1,10 @@
 scope: {{ getenv "PATRONI_SCOPE" "main" }}
 name: {{ getenv "PATRONI_NAME" }}
 
+restapi:
+  listen: "0.0.0.0:8008"
+  connect_address: "{{ sockaddr.GetPrivateIP }}:8008"
+
 bootstrap:
   dcs:
     maximum_lag_on_failover: 1048576
@@ -32,10 +36,6 @@ bootstrap:
   basebackup:
   - verbose
   - max-rate: 100M
-
-restapi:
-  listen: "0.0.0.0:8008"
-  connect_address: "{{ sockaddr.GetPrivateIP }}:8008"
 
 postgresql:
   listen: "0.0.0.0:5432"
