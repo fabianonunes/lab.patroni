@@ -95,6 +95,14 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
+        - name: PATRONI_EXT_MAX_CONNECTIONS
+          value: "150"
+        - name: PATRONI_EXT_MAX_LOCKS_PER_TRANSACTION
+          value: "256"
+        - name: PATRONI_EXT_MAX_WORKER_PROCESSES
+          value: "7"
+        - name: PATRONI_EXT_WAL_KEEP_SIZE
+          value: "2GB"
       terminationGracePeriodSeconds: 30
       volumes:
       - name: postgresql-config
