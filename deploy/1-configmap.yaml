@@ -20,7 +20,7 @@ data:
     huge_pages: off
 
     # wal
-    # wal_keep_size: 2GB # dcs preferred
+    # wal_keep_size: 2GB # dcs restricted
     min_wal_size: 1GB
     max_wal_size: 4GB
     wal_buffers: 16MB
@@ -34,4 +34,3 @@ data:
     effective_io_concurrency: 300        # hdd=2, ssd=200, san=300
     checkpoint_completion_target: 0.9
     random_page_cost: 1.1
-
