@@ -1,5 +1,5 @@
-scope: batman
-name: {{ getenv "HOSTNAME" }}
+scope: {{ getenv "PATRONI_SCOPE" "main" }}
+name: {{ getenv "PATRONI_NAME" }}
 
 bootstrap:
   dcs:
@@ -8,8 +8,8 @@ bootstrap:
       use_pg_rewind: true
       pg_hba:
       - host all all 0.0.0.0/0 md5
-      - host replication replicator 127.0.0.1/8 md5
-      - host replication replicator {{ sockaddr.GetPrivateIP }}/16 md5
+      - host replication {{ getenv "PATRONI_REPLICATION_USERNAME" }} 127.0.0.1/8 md5
+      - host replication {{ getenv "PATRONI_REPLICATION_USERNAME" }} {{ sockaddr.GetPrivateIP }}/16 md5
       parameters:
         max_connections: 150
         max_locks_per_transaction: 256
