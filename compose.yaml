@@ -1,0 +1,62 @@
+services:
+  haproxy:
+    image: haproxy:latest
+    container_name: haproxy
+    ports:
+    - "5000:5000"
+    - "7000:7000"
+    volumes:
+    - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+    depends_on:
+    - postgresql0
+    - postgresql1
+
+  postgresql0:
+    image: localhost/patroni
+    build:
+      context: .
+    ports:
+    - "5001:5432"
+    privileged: true
+    environment: &env
+      PATRONI_ETCD3_HOST: "192.168.10.5:2379"
+      PATRONI_REPLICATION_USERNAME: "replicator"
+      PATRONI_REPLICATION_PASSWORD: "rep-pass"
+      PATRONI_SUPERUSER_USERNAME: "postgres"
+      PATRONI_SUPERUSER_PASSWORD: "patroni"
+    hostname: postgresql0
+    volumes:
+    - ./postgresql.parameters.yaml:/etc/patroni/postgresql.parameters.yaml
+    - ./data/postgresql0:/var/lib/postgresql/data
+
+  postgresql1:
+    image: localhost/patroni
+    build:
+      context: .
+    ports:
+    - "5002:5432"
+    privileged: true
+    environment:
+      <<: *env
+    hostname: postgresql1
+    volumes:
+    - ./postgresql.parameters.yaml:/etc/patroni/postgresql.parameters.yaml
+    - ./data/postgresql1:/var/lib/postgresql/data
+
+  postgresql2:
+    image: localhost/patroni
+    build:
+      context: .
+    ports:
+    - "5003:5432"
+    privileged: true
+    environment:
+      <<: *env
+    hostname: postgresql2
+    volumes:
+    - ./postgresql.parameters.yaml:/etc/patroni/postgresql.parameters.yaml
+    - ./data/postgresql2:/var/lib/postgresql/data
+
+  shell:
+    image: ghcr.io/fabianonunes/docker.shell
+    command: wait

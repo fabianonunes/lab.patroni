@@ -1,0 +1,29 @@
+# cpu
+# max_worker_processes: 7 # dcs only
+# max_connections: 150 # dcs only
+max_parallel_workers: 7
+max_parallel_workers_per_gather: 4
+max_parallel_maintenance_workers: 4
+
+# ram
+shared_buffers: 1536MB               # ~25% RAM
+work_mem: 42509kB                    # 25% RAM / max_connections
+maintenance_work_mem: 384MB          # ~5% RAM
+effective_cache_size: 4608MB         # ~50% RAM
+huge_pages: off
+
+# wal
+# wal_keep_size: 2GB # dcs preferred
+min_wal_size: 1GB
+max_wal_size: 4GB
+wal_buffers: 16MB
+wal_compression: lz4
+
+# locks - para resolver "out of shared memory"
+# max_locks_per_transaction: 256 # dcs only
+max_pred_locks_per_transaction: 64
+
+# outros
+effective_io_concurrency: 300        # hdd=2, ssd=200, san=300
+checkpoint_completion_target: 0.9
+random_page_cost: 1.1
