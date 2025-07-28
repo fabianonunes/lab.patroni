@@ -22,18 +22,6 @@ spec:
       serviceAccountName: patronidemo
       securityContext:
         fsGroup: 999
-      initContainers:
-      - name: take-data-dir-ownership
-        image: alpine:3
-        command:
-        - sh
-        - -c
-        - |
-          chown 999:999 /pgdata
-          chmod 700 /pgdata
-        volumeMounts:
-        - name: pgdata
-          mountPath: /pgdata
       containers:
       - name: shell
         image: ghcr.io/fabianonunes/docker.shell:latest

@@ -42,7 +42,6 @@ COPY entrypoint.sh /entrypoint.sh
 COPY patroni.yaml.tpl /etc/patroni/patroni.yaml.tpl
 
 RUN chown postgres:postgres /etc/patroni
-USER postgres
 WORKDIR /etc/patroni
 
 ENTRYPOINT [ "pid1", "--" ]
