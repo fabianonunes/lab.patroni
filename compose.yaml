@@ -12,7 +12,7 @@ services:
     - postgresql1
 
   postgresql0:
-    image: localhost/patroni
+    image: registry.boo.eth0.work/library/patroni
     build:
       context: .
     ports:
@@ -30,7 +30,7 @@ services:
     - ./data/postgresql0:/var/lib/postgresql/data
 
   postgresql1:
-    image: localhost/patroni
+    image: registry.boo.eth0.work/library/patroni
     build:
       context: .
     ports:
@@ -44,7 +44,7 @@ services:
     - ./data/postgresql1:/var/lib/postgresql/data
 
   postgresql2:
-    image: localhost/patroni
+    image: registry.boo.eth0.work/library/patroni
     build:
       context: .
     ports:
