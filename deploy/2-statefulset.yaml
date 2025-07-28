@@ -35,11 +35,12 @@ spec:
         - name: pgdata
           mountPath: /pgdata
       containers:
+      - name: shell
+        image: ghcr.io/fabianonunes/docker.shell:latest
+        args:
+        - wait
       - name: *cluster_name
         image: registry.boo.eth0.work/library/patroni:latest
-        # image: ghcr.io/fabianonunes/docker.shell:latest
-        # args:
-        # - wait
         imagePullPolicy: Always
         readinessProbe:
           httpGet:
