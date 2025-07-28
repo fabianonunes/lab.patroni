@@ -11,13 +11,14 @@ RUN <<EOT
   apt-get update
   apt-get install --yes --no-install-recommends \
     nano \
-    patroni \
+    patroni=4.0.6-1.pgdg120+1 \
     pid1 \
   ;
   rm -rf /var/lib/apt/lists/*
 EOT
 
 COPY --from=builder /go/bin/ /usr/local/bin/
+
 COPY entrypoint.sh /entrypoint.sh
 COPY patroni.yaml.tpl /etc/patroni/patroni.yaml.tpl
 
