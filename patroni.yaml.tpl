@@ -33,6 +33,11 @@ postgresql:
   connect_address: "{{ sockaddr.GetPrivateIP }}:5432"
   data_dir: /var/lib/postgresql/data
   pgpass: /tmp/pgpass0
+  authentication:
+    superuser:
+      password: {{ getenv "PATRONI_SUPERUSER_PASSWORD" }}
+    replication:
+      password: {{ getenv "PATRONI_REPLICATION_PASSWORD" }}
   parameters:
 {{ include "postgresql.parameters" | indent 4 }}
 
