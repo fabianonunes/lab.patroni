@@ -56,6 +56,19 @@ postgresql:
       password: {{ getenv "PATRONI_SUPERUSER_PASSWORD" }}
     replication:
       password: {{ getenv "PATRONI_REPLICATION_PASSWORD" }}
+
+  create_replica_methods:
+  - pgbackrest
+  - basebackup
+  pgbackrest:
+    command: pgbackrest --stanza=main restore
+    keep_data: True
+    no_params: True
+  basebackup:
+  - verbose
+  - checkpoint: fast
+  - max-rate: 100M
+
   parameters:
     archive_mode: on
     archive_command: pgbackrest --stanza=main archive-push %p
