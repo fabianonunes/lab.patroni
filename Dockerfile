@@ -39,9 +39,7 @@ COPY --from=deps /go/bin/ /usr/local/bin/
 COPY --from=extensions /usr/lib/postgresql/17/lib /usr/lib/postgresql/17/lib
 COPY --from=extensions /usr/share/postgresql/17/extension /usr/share/postgresql/17/extension
 
-COPY entrypoint.sh /entrypoint.sh
-COPY patroni-post-bootstrap.sh /usr/local/bin
-COPY patroni.yaml.tpl /etc/patroni/patroni.yaml.tpl
+COPY fs /
 
 RUN chown postgres:postgres /etc/patroni
 WORKDIR /etc/patroni
