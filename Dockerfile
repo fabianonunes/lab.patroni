@@ -28,6 +28,7 @@ RUN <<EOT
   apt-get install --yes --no-install-recommends \
     nano \
     patroni=4.0.6-1.pgdg120+1 \
+    pgbackrest=2.56.0-1.pgdg120+1 \
     pid1 \
   ;
   rm -rf /var/lib/apt/lists/*
