@@ -30,7 +30,7 @@ bootstrap:
         max_replication_slots:      {{ getenv "PATRONI_EXT_MAX_REPLICATION_SLOTS" }}
         wal_log_hints:              {{ getenv "PATRONI_EXT_WAL_LOG_HINTS" }}
 
-  post_bootstrap: /usr/local/bin/patroni-post-bootstrap.sh
+  post_bootstrap: /usr/local/bin/patroni-post-bootstrap
 
   {{ if file.Exists "/var/lib/pgbackrest/backup/main/latest" }}
   method: pgbackrest
