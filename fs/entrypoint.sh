@@ -1,9 +1,10 @@
 #!/bin/bash
 set -e
 
-gomplate --file patroni.yaml.tpl \
-  --datasource postgresql.parameters=postgresql.parameters.yaml \
-  --out patroni.yaml
+gomplate --datasource postgresql.parameters=postgresql.parameters.yaml \
+  --file patroni.yaml.tpl --out patroni.yaml
+
+gomplate --file /etc/crontab.tpl  --out /etc/crontab
 
 unset PATRONI_SUPERUSER_PASSWORD PATRONI_REPLICATION_PASSWORD
 
