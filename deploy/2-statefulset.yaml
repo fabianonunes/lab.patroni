@@ -44,6 +44,8 @@ spec:
         volumeMounts:
         - mountPath: /var/lib/postgresql/data
           name: pgdata
+        - mountPath: /var/lib/pgbackrest/
+          name: repository
         - mountPath: /etc/patroni/postgresql.parameters.yaml
           name: postgresql-config
           subPath: postgresql.parameters.yaml
@@ -93,6 +95,9 @@ spec:
       - name: postgresql-config
         configMap:
           name: postgresql-config
+      - name: repository
+        persistentVolumeClaim:
+          claimName: repository
   volumeClaimTemplates:
   - metadata:
       name: pgdata
