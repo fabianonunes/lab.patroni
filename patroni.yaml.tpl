@@ -30,6 +30,9 @@ bootstrap:
         max_replication_slots:      {{ getenv "PATRONI_EXT_MAX_REPLICATION_SLOTS" }}
         wal_log_hints:              {{ getenv "PATRONI_EXT_WAL_LOG_HINTS" }}
 
+  post_bootstrap: /usr/local/bin/patroni-post-bootstrap.sh
+
+  {{ if file.Exists "/var/lib/pgbackrest/backup/main/latest" }}
   method: pgbackrest
   pgbackrest:
     command: pgbackrest --stanza=main restore
@@ -37,6 +40,7 @@ bootstrap:
     recovery_conf:
       recovery_target_timeline: latest
       restore_command: pgbackrest --stanza=main archive-get %f %p
+  {{ end }}
 
   initdb:
   - encoding: UTF8
