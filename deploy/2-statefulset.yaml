@@ -42,16 +42,15 @@ spec:
         - containerPort: 5432
           protocol: TCP
         volumeMounts:
-        - mountPath: /var/lib/postgresql/data
-          name: pgdata
-        - mountPath: /var/lib/pgbackrest/
-          name: repository
-        - mountPath: /etc/patroni/postgresql.parameters.yaml
-          name: postgresql-config
+        - name: unix-socket-directories
+          mountPath: /var/run/postgresql
+        - name: pgdata
+          mountPath: /var/lib/postgresql/data
+        - name: repository
+          mountPath: /var/lib/pgbackrest
+        - name: postgresql-config
+          mountPath: /etc/patroni/postgresql.parameters.yaml
           subPath: postgresql.parameters.yaml
-        - mountPath: /etc/pgbackrest.conf
-          name: postgresql-config
-          subPath: pgbackrest.conf
         env:
         - name: PATRONI_KUBERNETES_POD_IP
           valueFrom:
@@ -93,14 +92,52 @@ spec:
           value: "7"
         - name: PATRONI_EXT_WAL_KEEP_SIZE
           value: "2GB"
-      terminationGracePeriodSeconds: 30
+      - name: metrics
+        image: registry.boo.eth0.work/library/patroni-metrics:latest
+        ports:
+        - containerPort: 9187
+          name: http-metrics
+          protocol: TCP
+        readinessProbe:
+          failureThreshold: 6
+          httpGet:
+            path: /
+            port: http-metrics
+            scheme: HTTP
+          initialDelaySeconds: 5
+          periodSeconds: 10
+          successThreshold: 1
+          timeoutSeconds: 5
+        env:
+        - name: DATA_SOURCE_URI
+          value: localhost:5432/postgres?sslmode=disable
+        - name: DATA_SOURCE_USER
+          value: postgres
+        - name: DATA_SOURCE_PASS
+          valueFrom:
+            secretKeyRef:
+              name: *cluster_name
+              key: superuser-password
+      - name: cron
+        image: registry.boo.eth0.work/library/patroni-cron:latest
+        volumeMounts:
+        - name: unix-socket-directories
+          mountPath: /var/run/postgresql
+        - name: repository
+          mountPath: /var/lib/pgbackrest
+        - name: pgdata
+          mountPath: /var/lib/postgresql/data
+          readOnly: true
       volumes:
+      - name: unix-socket-directories
+        emptyDir: {}
       - name: postgresql-config
         configMap:
           name: postgresql-config
       - name: repository
         persistentVolumeClaim:
           claimName: repository
+      terminationGracePeriodSeconds: 300
   volumeClaimTemplates:
   - metadata:
       name: pgdata

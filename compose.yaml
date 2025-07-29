@@ -1,20 +1,23 @@
 services:
-  haproxy:
-    image: haproxy:latest
-    container_name: haproxy
-    ports:
-    - "5000:5000"
-    - "7000:7000"
-    volumes:
-    - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
-    depends_on:
-    - postgresql0
-    - postgresql1
+  metrics:
+    image: registry.boo.eth0.work/library/patroni-metrics
+    build:
+      dockerfile: Dockerfile.metrics
+      x-bake:
+        output: type=registry
+
+  cron:
+    image: registry.boo.eth0.work/library/patroni-cron
+    build:
+      dockerfile: Dockerfile.cron
+      x-bake:
+        output: type=registry
 
   postgresql0:
     image: registry.boo.eth0.work/library/patroni
     build:
       context: .
+      target: base
       x-bake:
         output: type=registry
     ports:
@@ -59,6 +62,49 @@ services:
     - ./postgresql.parameters.yaml:/etc/patroni/postgresql.parameters.yaml
     - ./data/postgresql2:/var/lib/postgresql/data
 
+  haproxy:
+    image: haproxy:latest
+    container_name: haproxy
+    ports:
+    - "5000:5000"
+    - "7000:7000"
+    configs:
+    - source: haproxy.cfg
+      target: /usr/local/etc/haproxy/haproxy.cfg
+    depends_on:
+    - postgresql0
+    - postgresql1
+
   shell:
     image: ghcr.io/fabianonunes/docker.shell
     command: wait
+
+
+configs:
+  haproxy.cfg:
+    content: |
+      global
+          maxconn 100
+
+      defaults
+          log global
+          mode tcp
+          retries 2
+          timeout client 30m
+          timeout connect 4s
+          timeout server 30m
+          timeout check 5s
+
+      listen stats
+          mode http
+          bind *:7000
+          stats enable
+          stats uri /
+
+      listen batman
+          bind *:5000
+          option httpchk
+          http-check expect status 200
+          default-server inter 2s fall 2 rise 1 on-marked-down shutdown-sessions
+          server postgresql_0 postgresql0:5432 maxconn 100 check port 8008
+          server postgresql_1 postgresql1:5432 maxconn 100 check port 8008
