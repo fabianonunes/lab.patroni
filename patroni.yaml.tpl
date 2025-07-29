@@ -30,6 +30,14 @@ bootstrap:
         max_replication_slots:      {{ getenv "PATRONI_EXT_MAX_REPLICATION_SLOTS" }}
         wal_log_hints:              {{ getenv "PATRONI_EXT_WAL_LOG_HINTS" }}
 
+  method: pgbackrest
+  pgbackrest:
+    command: pgbackrest --stanza=main restore
+    no_params: True
+    recovery_conf:
+      recovery_target_timeline: latest
+      restore_command: pgbackrest --stanza=main archive-get %f %p
+
   initdb:
   - encoding: UTF8
   - data-checksums # necessário para pg_rewind
