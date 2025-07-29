@@ -46,9 +46,10 @@ bootstrap:
   - encoding: UTF8
   - data-checksums # necessário para pg_rewind
 
-  basebackup:
-  - verbose
-  - max-rate: 100M
+  # TODO: isso deveria estar aqui? está deslocado? tem função?
+  # basebackup:
+  # - verbose
+  # - max-rate: 100M
 
 postgresql:
   listen: "0.0.0.0:5432"
