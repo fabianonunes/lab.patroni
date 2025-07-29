@@ -40,11 +40,11 @@ bootstrap:
     recovery_conf:
       recovery_target_timeline: latest
       restore_command: pgbackrest --stanza=main archive-get %f %p
-  {{ end }}
-
+  {{ else }}
   initdb:
   - encoding: UTF8
   - data-checksums # necessário para pg_rewind
+  {{ end }}
 
   # TODO: isso deveria estar aqui? está deslocado? tem função?
   # basebackup:
