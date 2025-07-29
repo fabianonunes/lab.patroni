@@ -49,6 +49,9 @@ spec:
         - mountPath: /etc/patroni/postgresql.parameters.yaml
           name: postgresql-config
           subPath: postgresql.parameters.yaml
+        - mountPath: /etc/pgbackrest.conf
+          name: postgresql-config
+          subPath: pgbackrest.conf
         env:
         - name: PATRONI_KUBERNETES_POD_IP
           valueFrom:

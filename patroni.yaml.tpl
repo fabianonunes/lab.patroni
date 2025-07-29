@@ -11,6 +11,7 @@ bootstrap:
     postgresql:
       use_pg_rewind: true
       pg_hba:
+      - local all all trust
       - host all all 0.0.0.0/0 md5
       - host replication {{ getenv "PATRONI_REPLICATION_USERNAME" }} 127.0.0.1/8 md5
       - host replication {{ getenv "PATRONI_REPLICATION_USERNAME" }} {{ sockaddr.GetPrivateIP }}/16 md5
@@ -48,6 +49,8 @@ postgresql:
     replication:
       password: {{ getenv "PATRONI_REPLICATION_PASSWORD" }}
   parameters:
+    archive_mode: on
+    archive_command: pgbackrest --stanza=main archive-push %p
 {{ include "postgresql.parameters" | indent 4 }}
 
 watchdog:
