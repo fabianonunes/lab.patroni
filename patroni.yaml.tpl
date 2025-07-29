@@ -56,6 +56,7 @@ postgresql:
   data_dir: /var/lib/postgresql/data
   pgpass: /tmp/pgpass0
   authentication:
+    # TODO: essas senhas não são reconhecidas automaticamente?
     superuser:
       password: {{ getenv "PATRONI_SUPERUSER_PASSWORD" }}
     replication:
