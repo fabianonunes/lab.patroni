@@ -31,7 +31,7 @@ RUN <<EOT
     pgbackrest=2.56.0-1.pgdg120+1 \
     pid1 \
   ;
-  rm -rf /var/lib/apt/lists/*
+  rm -rf /var/lib/apt/lists/* /etc/patroni/*
 EOT
 
 COPY --from=deps /go/bin/ /usr/local/bin/
