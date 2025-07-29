@@ -1,4 +1,5 @@
 #!/bin/bash
+set -e
 
 if [[ ! -d /var/lib/pgbackrest/backup/main ]]; then
   pgbackrest --stanza=main stanza-create
