@@ -3,6 +3,8 @@
 ### deps
 FROM golang:bookworm AS deps
 RUN go install github.com/hairyhenderson/gomplate/v4/cmd/gomplate@v4.3.3
+RUN go install github.com/aptible/supercronic@v0.2.34
+RUN go install github.com/canonical/pebble/cmd/pebble@v1.22.2
 
 ### extensions
 FROM debian:bookworm AS extensions
@@ -26,6 +28,7 @@ SHELL ["/bin/bash", "-ec"]
 RUN <<EOT
   apt-get update
   apt-get install --yes --no-install-recommends \
+    curl \
     nano \
     patroni=4.0.6-1.pgdg120+1 \
     pgbackrest=2.56.0-1.pgdg120+1 \
