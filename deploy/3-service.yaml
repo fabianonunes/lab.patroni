@@ -40,6 +40,22 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  name: patronidemo-headless
+  namespace: patroni
+  labels:
+    application: patroni
+    cluster-name: patronidemo
+spec:
+  type: ClusterIP
+  clusterIP: None
+  selector:
+    application: patroni
+    cluster-name: patronidemo
+    role: primary
+---
+apiVersion: v1
+kind: Service
+metadata:
   name: patronidemo-repl
   namespace: patroni
   labels:
