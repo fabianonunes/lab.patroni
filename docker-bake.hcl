@@ -11,19 +11,19 @@ variable "IMAGE_TAG" {
 }
 
 target "patroni" {
-  dockerfile = "patroni.Dockerfile"
+  target = "patroni"
   tags = ["${IMAGE_REPOSITORY}/patroni:${IMAGE_TAG}"]
   output = ["type=registry"]
 }
 
 target "backup" {
-  dockerfile = "backup.Dockerfile"
+  target = "backup"
   tags = ["${IMAGE_REPOSITORY}/patroni-backup:${IMAGE_TAG}"]
   output = ["type=registry"]
 }
 
 target "metrics" {
-  dockerfile = "metrics.Dockerfile"
+  target = "metrics"
   tags = ["${IMAGE_REPOSITORY}/patroni-metrics:${IMAGE_TAG}"]
   output = ["type=registry"]
 }
