@@ -121,7 +121,7 @@ spec:
             secretKeyRef:
               name: *cluster_name
               key: superuser-password
-      - name: cron
+      - name: backup
         image: registry.boo.eth0.work/library/patroni-cron:latest
         volumeMounts:
         - name: unix-socket-directories
