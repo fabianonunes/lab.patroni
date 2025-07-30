@@ -38,7 +38,6 @@ RUN <<EOT
     pgbackrest=2.56.0-1.pgdg120+1 \
     pid1 \
   ;
-  rm -rf /etc/patroni/*
 EOT
 COPY --from=go-builder /go/bin/gomplate /usr/local/bin/
 COPY fs.patroni /
