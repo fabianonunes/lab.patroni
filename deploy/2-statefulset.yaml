@@ -97,17 +97,11 @@ spec:
         image: registry.boo.eth0.work/library/patroni-metrics:latest
         ports:
         - containerPort: 9187
-          name: http-metrics
-          protocol: TCP
+          name: metrics
         readinessProbe:
-          failureThreshold: 6
           httpGet:
             path: /
-            port: http-metrics
-            scheme: HTTP
-          initialDelaySeconds: 5
-          periodSeconds: 10
-          successThreshold: 1
+            port: metrics
           timeoutSeconds: 5
         env:
         - name: DATA_SOURCE_URI
