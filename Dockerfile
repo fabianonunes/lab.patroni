@@ -28,7 +28,7 @@ RUN <<EOT
     pid1 \
   ;
 EOT
-COPY --from=deps /go/bin/gomplate /usr/local/bin/
+COPY --from=deps /go/bin/gomplate /go/bin/supercronic /usr/local/bin/
 COPY fs.backup /
 USER postgres
 ENTRYPOINT [ "pid1", "--" ]
