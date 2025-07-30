@@ -6,6 +6,11 @@ RUN go install github.com/aptible/supercronic@v0.2.34
 RUN go install github.com/hairyhenderson/gomplate/v4/cmd/gomplate@v4.3.3
 RUN go install github.com/prometheus-community/postgres_exporter/cmd/postgres_exporter@v0.17.1
 
+### metrics
+FROM scratch AS metrics
+COPY --from=go-builder /go/bin/postgres_exporter /usr/local/bin/
+ENTRYPOINT [ "postgres_exporter" ]
+
 ### backup
 FROM postgres:17.5-bookworm AS backup
 
@@ -27,11 +32,6 @@ USER postgres
 
 ENTRYPOINT [ "pid1", "--" ]
 CMD [ "/entrypoint.sh" ]
-
-### metrics
-FROM scratch AS metrics
-COPY --from=go-builder /go/bin/postgres_exporter /usr/local/bin/
-ENTRYPOINT [ "postgres_exporter" ]
 
 ### patroni
 FROM postgres:17.5-bookworm AS patroni
