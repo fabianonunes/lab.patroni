@@ -21,7 +21,7 @@ RUN <<EOT
 EOT
 
 COPY --from=go-builder /go/bin/gomplate /usr/local/bin/
-COPY fs.cron /
+COPY fs.backup /
 
 USER postgres
 
@@ -48,7 +48,7 @@ RUN <<EOT
 EOT
 
 COPY --from=go-builder /go/bin/gomplate /usr/local/bin/
-COPY fs /
+COPY fs.patroni /
 
 WORKDIR /etc/patroni
 
