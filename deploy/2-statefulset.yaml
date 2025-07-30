@@ -51,6 +51,9 @@ spec:
         - name: postgresql-config
           mountPath: /etc/patroni/postgresql.parameters.yaml
           subPath: postgresql.parameters.yaml
+        - name: postgresql-config
+          mountPath: /etc/pgbackrest.conf
+          subPath: pgbackrest.conf
         env:
         - name: PATRONI_KUBERNETES_POD_IP
           valueFrom:
@@ -128,6 +131,9 @@ spec:
         - name: pgdata
           mountPath: /var/lib/postgresql/data
           readOnly: true
+        - name: postgresql-config
+          mountPath: /etc/pgbackrest.conf
+          subPath: pgbackrest.conf
       volumes:
       - name: unix-socket-directories
         emptyDir: {}
