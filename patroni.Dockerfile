@@ -19,8 +19,8 @@ RUN <<EOT
 EOT
 
 COPY --from=deps /go/bin/ /usr/local/bin/
-
 COPY fs /
+
 WORKDIR /etc/patroni
 
 ENTRYPOINT [ "pid1", "--" ]

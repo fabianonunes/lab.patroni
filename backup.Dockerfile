@@ -20,8 +20,9 @@ RUN <<EOT
 EOT
 
 COPY --from=deps /go/bin/ /usr/local/bin/
+COPY fs.cron /
 
 USER postgres
-COPY fs.cron /
+
 ENTRYPOINT [ "pid1", "--" ]
 CMD [ "/entrypoint.sh" ]

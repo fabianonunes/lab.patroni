@@ -10,4 +10,5 @@ FROM postgres:17.5-bookworm AS base
 COPY --from=deps /go/bin/ /usr/local/bin/
 
 USER postgres
+
 ENTRYPOINT [ "postgres_exporter" ]
