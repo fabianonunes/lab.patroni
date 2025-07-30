@@ -1,14 +1,14 @@
 # syntax=docker/dockerfile:1
 
-### go-builder
-FROM golang:bookworm AS go-builder
+### deps
+FROM golang:bookworm AS deps
 RUN go install github.com/aptible/supercronic@v0.2.34
 RUN go install github.com/hairyhenderson/gomplate/v4/cmd/gomplate@v4.3.3
 RUN go install github.com/prometheus-community/postgres_exporter/cmd/postgres_exporter@v0.17.1
 
 ### metrics
 FROM scratch AS metrics
-COPY --from=go-builder /go/bin/postgres_exporter /usr/local/bin/
+COPY --from=deps /go/bin/postgres_exporter /usr/local/bin/
 ENTRYPOINT [ "postgres_exporter" ]
 
 ### backup
@@ -22,7 +22,7 @@ RUN <<EOT
     pid1 \
   ;
 EOT
-COPY --from=go-builder /go/bin/gomplate /usr/local/bin/
+COPY --from=deps /go/bin/gomplate /usr/local/bin/
 COPY fs.backup /
 USER postgres
 ENTRYPOINT [ "pid1", "--" ]
@@ -39,7 +39,7 @@ RUN <<EOT
     pid1 \
   ;
 EOT
-COPY --from=go-builder /go/bin/gomplate /usr/local/bin/
+COPY --from=deps /go/bin/gomplate /usr/local/bin/
 COPY fs.patroni /
 WORKDIR /etc/patroni
 ENTRYPOINT [ "pid1", "--" ]
