@@ -13,8 +13,8 @@ RUN go install github.com/prometheus-community/postgres_exporter/cmd/postgres_ex
 
 ### metrics
 FROM scratch AS metrics
-COPY --from=deps /go/bin/postgres_exporter /usr/local/bin/
-ENTRYPOINT [ "postgres_exporter" ]
+COPY --from=deps /go/bin/postgres_exporter /
+ENTRYPOINT [ "/postgres_exporter" ]
 
 ### backup
 FROM postgres:${POSTGRESQL_VERSION} AS backup
