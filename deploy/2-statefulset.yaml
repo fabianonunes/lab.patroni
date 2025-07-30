@@ -7,17 +7,15 @@ metadata:
     application: patroni
     cluster-name: *cluster_name
 spec:
-  replicas: 3
+  replicas: 2
   serviceName: *cluster_name
   selector:
-    matchLabels:
+    matchLabels: &labels
       application: patroni
       cluster-name: *cluster_name
   template:
     metadata:
-      labels:
-        application: patroni
-        cluster-name: *cluster_name
+      labels: *labels
     spec:
       serviceAccountName: patronidemo
       containers:
@@ -62,9 +60,9 @@ spec:
             fieldRef:
               fieldPath: metadata.namespace
         - name: PATRONI_KUBERNETES_USE_ENDPOINTS
-          value: 'true'
+          value: "true"
         - name: PATRONI_KUBERNETES_LABELS
-          value: '{application: patroni, cluster-name: patronidemo}'
+          value: "{application: patroni, cluster-name: patronidemo}"
         - name: PATRONI_SUPERUSER_USERNAME
           value: postgres
         - name: PATRONI_SUPERUSER_PASSWORD
@@ -136,6 +134,12 @@ spec:
         persistentVolumeClaim:
           claimName: repository
       terminationGracePeriodSeconds: 300
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchLabels: *labels
+            topologyKey: kubernetes.io/hostname
   volumeClaimTemplates:
   - metadata:
       name: pgdata
