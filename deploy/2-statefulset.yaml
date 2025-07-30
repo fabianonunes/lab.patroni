@@ -122,7 +122,7 @@ spec:
               name: *cluster_name
               key: superuser-password
       - name: backup
-        image: registry.boo.eth0.work/library/patroni-cron:latest
+        image: registry.boo.eth0.work/library/patroni-backup:latest
         volumeMounts:
         - name: unix-socket-directories
           mountPath: /var/run/postgresql
