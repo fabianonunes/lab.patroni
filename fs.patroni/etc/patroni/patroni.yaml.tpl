@@ -46,11 +46,6 @@ bootstrap:
   - data-checksums # necessário para pg_rewind
   {{ end }}
 
-  # TODO: isso deveria estar aqui? está deslocado? tem função?
-  # basebackup:
-  # - verbose
-  # - max-rate: 100M
-
 postgresql:
   listen: "0.0.0.0:5432"
   connect_address: "{{ sockaddr.GetPrivateIP }}:5432"
