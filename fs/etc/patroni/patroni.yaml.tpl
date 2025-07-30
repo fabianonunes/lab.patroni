@@ -35,7 +35,8 @@ bootstrap:
   {{ if file.Exists "/var/lib/pgbackrest/backup/main/latest" }}
   method: pgbackrest
   pgbackrest:
-    command: pgbackrest --stanza=main restore
+    command: pgbackrest --stanza=main --delta restore
+    keep_data: True
     no_params: True
     recovery_conf:
       recovery_target_timeline: latest
@@ -67,7 +68,7 @@ postgresql:
   - pgbackrest
   - basebackup
   pgbackrest:
-    command: pgbackrest --stanza=main restore
+    command: pgbackrest --stanza=main --delta restore
     keep_data: True
     no_params: True
   basebackup:
