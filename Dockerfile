@@ -14,7 +14,7 @@ ENTRYPOINT [ "postgres_exporter" ]
 ### backup
 FROM postgres:17.5-bookworm AS backup
 RUN <<EOT
-  set -e
+  set -ex
   apt-get update
   apt-get install --yes --no-install-recommends \
     curl \
@@ -31,7 +31,7 @@ CMD [ "/entrypoint.sh" ]
 ### patroni
 FROM postgres:17.5-bookworm AS patroni
 RUN <<EOT
-  set -e
+  set -ex
   apt-get update
   apt-get install --yes --no-install-recommends \
     patroni=4.0.6-1.pgdg120+1 \
