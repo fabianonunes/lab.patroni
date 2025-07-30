@@ -20,8 +20,6 @@ spec:
         cluster-name: *cluster_name
     spec:
       serviceAccountName: patronidemo
-      securityContext:
-        fsGroup: 999
       containers:
       - name: *cluster_name
         image: registry.boo.eth0.work/library/patroni:latest
