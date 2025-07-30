@@ -13,7 +13,6 @@ ENTRYPOINT [ "postgres_exporter" ]
 
 ### backup
 FROM postgres:17.5-bookworm AS backup
-
 RUN <<EOT
   set -e
   apt-get update
@@ -22,20 +21,15 @@ RUN <<EOT
     pgbackrest=2.56.0-1.pgdg120+1 \
     pid1 \
   ;
-  rm -rf /var/lib/apt/lists/*
 EOT
-
 COPY --from=go-builder /go/bin/gomplate /usr/local/bin/
 COPY fs.backup /
-
 USER postgres
-
 ENTRYPOINT [ "pid1", "--" ]
 CMD [ "/entrypoint.sh" ]
 
 ### patroni
 FROM postgres:17.5-bookworm AS patroni
-
 RUN <<EOT
   set -e
   apt-get update
@@ -44,13 +38,10 @@ RUN <<EOT
     pgbackrest=2.56.0-1.pgdg120+1 \
     pid1 \
   ;
-  rm -rf /var/lib/apt/lists/* /etc/patroni/*
+  rm -rf /etc/patroni/*
 EOT
-
 COPY --from=go-builder /go/bin/gomplate /usr/local/bin/
 COPY fs.patroni /
-
 WORKDIR /etc/patroni
-
 ENTRYPOINT [ "pid1", "--" ]
 CMD [ "/entrypoint.sh" ]
