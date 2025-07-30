@@ -1,5 +1,9 @@
 # syntax=docker/dockerfile:1
 
+ARG POSTGRESQL_VERSION=17.5-bookworm
+ARG PATRONI_VERSION=4.0.6-1.pgdg120+1
+ARG PGBACKREST_VERSION=2.56.0-1.pgdg120+1
+
 ### deps
 FROM golang:bookworm AS deps
 RUN go install github.com/aptible/supercronic@v0.2.34
@@ -12,13 +16,14 @@ COPY --from=deps /go/bin/postgres_exporter /usr/local/bin/
 ENTRYPOINT [ "postgres_exporter" ]
 
 ### backup
-FROM postgres:17.5-bookworm AS backup
+FROM postgres:${POSTGRESQL_VERSION} AS backup
+ARG PGBACKREST_VERSION
 RUN <<EOT
   set -ex
   apt-get update
   apt-get install --yes --no-install-recommends \
     curl \
-    pgbackrest=2.56.0-1.pgdg120+1 \
+    "pgbackrest=${PGBACKREST_VERSION}" \
     pid1 \
   ;
 EOT
@@ -29,13 +34,15 @@ ENTRYPOINT [ "pid1", "--" ]
 CMD [ "/entrypoint.sh" ]
 
 ### patroni
-FROM postgres:17.5-bookworm AS patroni
+FROM postgres:${POSTGRESQL_VERSION} AS patroni
+ARG PATRONI_VERSION
+ARG PGBACKREST_VERSION
 RUN <<EOT
   set -ex
   apt-get update
   apt-get install --yes --no-install-recommends \
-    patroni=4.0.6-1.pgdg120+1 \
-    pgbackrest=2.56.0-1.pgdg120+1 \
+    "patroni=${PATRONI_VERSION}" \
+    "pgbackrest=${PGBACKREST_VERSION}" \
     pid1 \
   ;
 EOT
