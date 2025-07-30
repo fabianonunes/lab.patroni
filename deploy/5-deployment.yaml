@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: shell
+  namespace: patroni
+spec:
+  selector:
+    matchLabels:
+      app: shell
+  template:
+    metadata:
+      labels:
+        app: shell
+    spec:
+      containers:
+      - name: shell
+        image: ghcr.io/fabianonunes/docker.shell:0.5.0
+        args:
+        - wait
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
