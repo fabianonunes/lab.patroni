@@ -44,7 +44,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: pgbouncer-lb
+  name: lb-pgbouncer
   namespace: patroni
   labels:
     application: patroni
@@ -64,7 +64,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: patronidemo-lb
+  name: lb-patronidemo
   namespace: patroni
   labels:
     application: patroni
