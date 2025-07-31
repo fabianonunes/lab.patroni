@@ -11,6 +11,7 @@ ARG CGO_ENABLED=0
 RUN go install github.com/aptible/supercronic@v0.2.34
 RUN go install github.com/hairyhenderson/gomplate/v4/cmd/gomplate@v4.3.3
 RUN go install github.com/prometheus-community/postgres_exporter/cmd/postgres_exporter@v0.17.1
+RUN go install github.com/prometheus-community/pgbouncer_exporter@v0.11.0
 
 ### metrics
 FROM scratch AS metrics
@@ -46,6 +47,7 @@ RUN <<EOT
     pid1 \
   ;
 EOT
+COPY --from=deps /go/bin/pgbouncer_exporter /usr/local/bin/
 COPY fs.pgbouncer /
 USER postgres
 ENTRYPOINT [ "pid1", "--" ]
