@@ -62,6 +62,24 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
+  name: patronidemo-lb
+  namespace: patroni
+  labels:
+    application: patroni
+    cluster-name: patronidemo
+spec:
+  type: LoadBalancer
+  externalTrafficPolicy: Local
+  selector:
+    application: patroni
+    cluster-name: patronidemo
+    role: primary
+  ports:
+  - port: 5432
+---
+apiVersion: v1
+kind: Service
+metadata:
   name: patronidemo-repl
   namespace: patroni
   labels:
