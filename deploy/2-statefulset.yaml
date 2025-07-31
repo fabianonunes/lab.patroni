@@ -61,8 +61,6 @@ spec:
               fieldPath: metadata.namespace
         - name: PATRONI_KUBERNETES_USE_ENDPOINTS
           value: "true"
-        - name: PATRONI_KUBERNETES_PORTS
-          value: '[{"name": "postgres", "port": 5432}, {"name": "pgbouncer", "port": 6432}]'
         - name: PATRONI_KUBERNETES_LABELS
           value: "{application: patroni, cluster-name: patronidemo}"
         - name: PATRONI_SUPERUSER_USERNAME
