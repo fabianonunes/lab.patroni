@@ -3,6 +3,7 @@
 ARG POSTGRESQL_VERSION=17.5-bookworm
 ARG PATRONI_VERSION=4.0.6-1.pgdg120+1
 ARG PGBACKREST_VERSION=2.56.0-1.pgdg120+1
+ARG PGBOUNCER_VERSION=1.24.1-1.pgdg120+1
 
 ### deps
 FROM golang:bookworm AS deps
@@ -33,6 +34,22 @@ COPY fs.backup /
 USER postgres
 ENTRYPOINT [ "pid1", "--" ]
 CMD [ "/entrypoint.sh" ]
+
+### pgbouncer
+FROM postgres:${POSTGRESQL_VERSION} AS pgbouncer
+ARG PGBOUNCER_VERSION
+RUN <<EOT
+  set -ex
+  apt-get update
+  apt-get install --yes --no-install-recommends \
+    "pgbouncer=${PGBOUNCER_VERSION}" \
+    pid1 \
+  ;
+EOT
+COPY fs.pgbouncer /
+USER postgres
+ENTRYPOINT [ "pid1", "--" ]
+CMD [ "pgbouncer", "/etc/pgbouncer/pgbouncer.ini" ]
 
 ### patroni
 FROM postgres:${POSTGRESQL_VERSION} AS patroni

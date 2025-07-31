@@ -61,6 +61,8 @@ spec:
               fieldPath: metadata.namespace
         - name: PATRONI_KUBERNETES_USE_ENDPOINTS
           value: "true"
+        - name: PATRONI_KUBERNETES_PORTS
+          value: '[{"name": "postgres", "port": 5432}, {"name": "pgbouncer", "port": 6432}]'
         - name: PATRONI_KUBERNETES_LABELS
           value: "{application: patroni, cluster-name: patronidemo}"
         - name: PATRONI_SUPERUSER_USERNAME
@@ -124,6 +126,21 @@ spec:
         - name: postgresql-config
           mountPath: /etc/pgbackrest.conf
           subPath: pgbackrest.conf
+      - name: pgbouncer
+        image: registry.boo.eth0.work/library/patroni-pgbouncer:latest
+        env:
+        - name: SUPERUSER_USERNAME
+          value: postgres
+        - name: SUPERUSER_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: *cluster_name
+              key: superuser-password
+        ports:
+        - containerPort: 6432
+        volumeMounts:
+        - name: unix-socket-directories
+          mountPath: /var/run/postgresql
       volumes:
       - name: unix-socket-directories
         emptyDir: {}

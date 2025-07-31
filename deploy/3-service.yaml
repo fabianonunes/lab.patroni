@@ -36,6 +36,10 @@ spec:
   ports:
   - port: 5432
     targetPort: 5432
+    name: postgres
+  - port: 6432
+    targetPort: 6432
+    name: pgbouncer
 ---
 apiVersion: v1
 kind: Service
@@ -71,3 +75,7 @@ spec:
   ports:
   - port: 5432
     targetPort: 5432
+    name: postgres
+  - port: 6432
+    targetPort: 6432
+    name: pgbouncer

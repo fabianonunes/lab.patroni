@@ -1,5 +1,5 @@
 group "default" {
-  targets = ["patroni", "backup", "metrics"]
+  targets = ["patroni", "pgbouncer", "backup", "metrics"]
 }
 
 variable "IMAGE_REPOSITORY" {
@@ -22,6 +22,12 @@ target "patroni" {
   inherits = ["common"]
   target = "patroni"
   tags = ["${IMAGE_REPOSITORY}/patroni:${IMAGE_TAG}"]
+}
+
+target "pgbouncer" {
+  inherits = ["common"]
+  target = "pgbouncer"
+  tags = ["${IMAGE_REPOSITORY}/patroni-pgbouncer:${IMAGE_TAG}"]
 }
 
 target "backup" {
