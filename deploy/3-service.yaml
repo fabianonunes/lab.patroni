@@ -43,7 +43,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: patronidemo-lb
+  name: pgbouncer-lb
   namespace: patroni
   labels:
     application: patroni
