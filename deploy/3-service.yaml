@@ -80,6 +80,7 @@ metadata:
     role: replica
 spec:
   type: ClusterIP
+  clusterIP: None
   selector:
     application: patroni
     cluster-name: *cluster_name
