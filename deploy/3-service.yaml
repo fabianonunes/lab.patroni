@@ -93,6 +93,3 @@ spec:
     application: patroni
     cluster-name: *cluster_name
     role: replica
-  ports:
-  - port: 5432
-    targetPort: 6432
