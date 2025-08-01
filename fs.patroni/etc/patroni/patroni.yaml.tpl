@@ -71,7 +71,7 @@ postgresql:
   - max-rate: 100M
 
   parameters:
-    archive_mode: on
+    archive_mode: "on"
     archive_command: pgbackrest --stanza=main archive-push %p
 {{ include "postgresql.parameters" | indent 4 }}
 
