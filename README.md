@@ -25,3 +25,8 @@ Qualquer mudança posterio deve ser feita via `patronictl edit-config` ou `kubec
 ## TODO
 
 - exporter do pgbouncer
+- o healthcheck deveria conferir se a instância está muito atrasada
+  - ideia para simular: troque as senhas de replicação e do superuser
+    na secret e escreva uma quantidade grande de dados.
+  - ou então investigar se tem alguma maneira de consultar no banco
+    se a replicação está em dia ou bem configurada.
