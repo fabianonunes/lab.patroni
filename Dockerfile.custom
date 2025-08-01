@@ -1,4 +1,6 @@
 # syntax=docker/dockerfile:1.4
+
+# pg_search
 FROM debian:bookworm AS builder
 ARG PGSEARCH_VERSION=0.17.2
 RUN <<EOT
@@ -10,3 +12,16 @@ RUN <<EOT
   wget "https://github.com/paradedb/paradedb/releases/download/v${PGSEARCH_VERSION}/${package}"
   dpkg -x "${package}" /
 EOT
+
+# postgresql
+FROM base
+RUN <<EOT
+  set -ex
+  apt-get update
+  apt-get install --yes --no-install-recommends \
+    postgresql-17-pgaudit \
+    postgresql-17-pgvector \
+  ;
+EOT
+COPY --from=builder /usr/lib/postgresql/17/lib /usr/lib/postgresql/17/lib
+COPY --from=builder /usr/share/postgresql/17/extension /usr/share/postgresql/17/extension

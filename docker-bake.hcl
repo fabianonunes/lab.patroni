@@ -18,14 +18,21 @@ target common {
   output = ["type=docker"]
 }
 
-target extensions {
-  dockerfile = "Dockerfile.extensions"
+target base {
+  target = "base"
+}
+
+target custom {
+  dockerfile = "Dockerfile.custom"
+  contexts = {
+    base = "target:base"
+  }
 }
 
 target "patroni" {
   inherits = ["common"]
   contexts = {
-    extensions = "target:extensions"
+    custom = "target:custom"
   }
   target = "patroni"
   tags = ["${IMAGE_REPOSITORY}/patroni:${IMAGE_TAG}"]

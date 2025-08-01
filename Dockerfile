@@ -53,17 +53,7 @@ USER postgres
 CMD [ "pgbouncer", "/etc/pgbouncer/pgbouncer.ini" ]
 
 ### patroni
-FROM base AS patroni
-RUN <<EOT
-  set -ex
-  apt-get update
-  apt-get install --yes --no-install-recommends \
-    postgresql-17-pgvector \
-    postgresql-17-pgaudit \
-  ;
-EOT
-COPY --from=extensions /usr/lib/postgresql/17/lib /usr/lib/postgresql/17/lib
-COPY --from=extensions /usr/share/postgresql/17/extension /usr/share/postgresql/17/extension
+FROM custom AS patroni
 COPY fs.patroni /
 WORKDIR /etc/patroni
 CMD [ "/entrypoint.sh" ]
