@@ -14,34 +14,31 @@ variable "IMAGE_TARGET" {
   default = "docker"
 }
 
-target postgresql {
-  dockerfile = "Dockerfile.postgres"
-}
-
-target base {
-  contexts = {
-    baseimage = "target:postgresql"
-  }
-}
-
 target common {
   output = ["type=docker"]
 }
 
+target extensions {
+  dockerfile = "Dockerfile.extensions"
+}
+
 target "patroni" {
-  inherits = ["common", "base"]
+  inherits = ["common"]
+  contexts = {
+    extensions = "target:extensions"
+  }
   target = "patroni"
   tags = ["${IMAGE_REPOSITORY}/patroni:${IMAGE_TAG}"]
 }
 
 target "pgbouncer" {
-  inherits = ["common", "base"]
+  inherits = ["common"]
   target = "pgbouncer"
   tags = ["${IMAGE_REPOSITORY}/patroni-pgbouncer:${IMAGE_TAG}"]
 }
 
 target "backup" {
-  inherits = ["common", "base"]
+  inherits = ["common"]
   target = "backup"
   tags = ["${IMAGE_REPOSITORY}/patroni-backup:${IMAGE_TAG}"]
 }
