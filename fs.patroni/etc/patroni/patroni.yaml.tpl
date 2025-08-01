@@ -72,8 +72,10 @@ postgresql:
 
   parameters:
     archive_mode: "on"
-    archive_command: pgbackrest --stanza=main archive-push %p
-{{ include "postgresql.parameters" | indent 4 }}
+    archive_command: "pgbackrest --stanza=main archive-push %p"
+    {{- range $i, $v := (datasource "postgresql.parameters") }}
+    {{ $i }}: {{ $v | quote }}
+    {{- end }}
 
 watchdog:
   mode: off
