@@ -1,5 +1,6 @@
 # syntax=docker/dockerfile:1
 
+ARG POSTGRESQL_IMAGE=postgres
 ARG POSTGRESQL_VERSION=17.5-bookworm
 ARG PATRONI_VERSION=4.0.6-1.pgdg120+1
 ARG PGBACKREST_VERSION=2.56.0-1.pgdg120+1
@@ -19,7 +20,7 @@ COPY --from=deps /go/bin/postgres_exporter /
 ENTRYPOINT [ "/postgres_exporter" ]
 
 ### base
-FROM postgres:${POSTGRESQL_VERSION} AS base
+FROM ${POSTGRESQL_IMAGE}:${POSTGRESQL_VERSION} AS base
 ARG PATRONI_VERSION
 ARG PGBACKREST_VERSION
 ARG PGBOUNCER_VERSION
