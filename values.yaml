@@ -19,9 +19,6 @@ settings:
     super: postgres
     replication: replicator
 
-  backup:
-    schedule: "14 */3 * * *"
-
   bootstrap:
     max_connections: 200
     max_locks_per_transaction: 256
