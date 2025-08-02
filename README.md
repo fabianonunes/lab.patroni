@@ -30,3 +30,6 @@ Qualquer mudança posterio deve ser feita via `patronictl edit-config` ou `kubec
     na secret e escreva uma quantidade grande de dados.
   - ou então investigar se tem alguma maneira de consultar no banco
     se a replicação está em dia ou bem configurada.
+- backup full e incremental no cron
+- usar `patroni --generate-sample-config` para ver ser tem alguma config importante
+  - vale a pena passar o parâmetro `password_encryption: scram-sha-256` no postgresql.conf?
