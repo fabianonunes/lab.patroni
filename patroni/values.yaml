@@ -19,13 +19,14 @@ storage:
     accessMode: ReadWriteOnce
     size: 5Gi
 
-nodeSelector: {}
-
 distributePods: "hard"
+
+nodeSelector: {}
 
 imagePullSecrets: []
 
-resources: {}
+resources:
+  patroni: {}
 
 settings:
   users:

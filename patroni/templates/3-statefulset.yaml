@@ -66,6 +66,18 @@ spec:
           valueFrom:
             fieldRef:
               fieldPath: metadata.name
+
+        - name: PATRONI_SUPERUSER_PASSWORD
+          valueFrom: &superuserPassword
+            secretKeyRef:
+              name: *fullName
+              key: superuser-password
+        - name: PATRONI_REPLICATION_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: *fullName
+              key: replication-password
+
         - name: PATRONI_SCOPE
           value: {{ .Release.Name }}
         - name: PATRONI_KUBERNETES_USE_ENDPOINTS
@@ -78,16 +90,6 @@ spec:
           value: {{ .Values.settings.users.super }}
         - name: PATRONI_REPLICATION_USERNAME
           value: {{ .Values.settings.users.replication }}
-        - name: PATRONI_SUPERUSER_PASSWORD
-          valueFrom: &superuserPassword
-            secretKeyRef:
-              name: *fullName
-              key: superuser-password
-        - name: PATRONI_REPLICATION_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: *fullName
-              key: replication-password
 
         # Atributos controlados pelo Patroni
         - name: PATRONI_EXT_MAX_CONNECTIONS
@@ -125,7 +127,7 @@ spec:
           mountPath: /etc/pgbackrest.conf
           subPath: pgbackrest.conf
 
-        {{- with .Values.resources }}
+        {{- with .Values.resources.patroni }}
         resources:
           {{- toYaml . | nindent 10 }}
         {{- end }}
