@@ -1,15 +1,14 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "patroni.fullname" . }}
+  name: {{ include "patroni.fullname" . }}-shell
 spec:
   selector:
-    matchLabels:
-      {{- include "patroni.selectorLabels" . | nindent 6 }}
+    matchLabels: &matchLabels
+      app.kubernetes.io/component: shell
   template:
     metadata:
-      labels:
-        {{- include "patroni.labels" . | nindent 8 }}
+      labels: *matchLabels
     spec:
       containers:
         - name: shell
