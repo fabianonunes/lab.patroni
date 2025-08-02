@@ -10,11 +10,11 @@ image:
 
 storage:
   pgdata:
-    class: "nfs-storage"
+    class: ""
     accessMode: ReadWriteOnce
     size: 1Gi
   repository:
-    class: "nfs-storage"
+    class: ""
     accessMode: ReadWriteOnce
     size: 5Gi
 
