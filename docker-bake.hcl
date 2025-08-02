@@ -3,7 +3,7 @@ group "default" {
 }
 
 variable "IMAGE_REPOSITORY" {
-  default = "localhost"
+  default = "localhost/patroni"
 }
 
 variable "IMAGE_TAG" {
@@ -35,23 +35,23 @@ target "patroni" {
     custom = "target:custom"
   }
   target = "patroni"
-  tags = ["${IMAGE_REPOSITORY}/patroni:${IMAGE_TAG}"]
+  tags = ["${IMAGE_REPOSITORY}:${IMAGE_TAG}"]
 }
 
 target "pgbouncer" {
   inherits = ["common"]
   target = "pgbouncer"
-  tags = ["${IMAGE_REPOSITORY}/patroni-pgbouncer:${IMAGE_TAG}"]
+  tags = ["${IMAGE_REPOSITORY}-pgbouncer:${IMAGE_TAG}"]
 }
 
 target "backup" {
   inherits = ["common"]
   target = "backup"
-  tags = ["${IMAGE_REPOSITORY}/patroni-backup:${IMAGE_TAG}"]
+  tags = ["${IMAGE_REPOSITORY}-backup:${IMAGE_TAG}"]
 }
 
 target "metrics" {
   inherits = ["common"]
   target = "metrics"
-  tags = ["${IMAGE_REPOSITORY}/patroni-metrics:${IMAGE_TAG}"]
+  tags = ["${IMAGE_REPOSITORY}-metrics:${IMAGE_TAG}"]
 }
