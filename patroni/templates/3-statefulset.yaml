@@ -3,7 +3,7 @@ kind: StatefulSet
 metadata:
   name: &fullName {{ include "patroni.fullname" . }}
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.replicas }}
   serviceName: *fullName
   selector:
     matchLabels: &memberLabels
@@ -13,12 +13,11 @@ spec:
   - metadata:
       name: pgdata
     spec:
-      storageClassName: {{ .Values.storageClass }}
-      accessModes:
-      - ReadWriteOnce
+      storageClassName: {{ .Values.storage.pgdata.class }}
+      accessModes: [{{ .Values.storage.pgdata.accessMode }}]
       resources:
         requests:
-          storage: 50Gi
+          storage: {{ .Values.storage.pgdata.size }}
 
   template:
     metadata:
@@ -76,9 +75,9 @@ spec:
         - name: PATRONI_KUBERNETES_LABELS
           value: {{ include "patroni.memberLabels" . | fromYaml | toJson | quote }}
         - name: PATRONI_SUPERUSER_USERNAME
-          value: {{ .Values.superuserUsername }}
+          value: {{ .Values.settings.users.super }}
         - name: PATRONI_REPLICATION_USERNAME
-          value: {{ .Values.replicationUsername }}
+          value: {{ .Values.settings.users.replication }}
         - name: PATRONI_SUPERUSER_PASSWORD
           valueFrom: &superuserPassword
             secretKeyRef:
@@ -123,7 +122,7 @@ spec:
           timeoutSeconds: 5 # TODO: precisa?
         env:
         - name: DATA_SOURCE_URI
-          value: {{ .Values.superuserUsername }}@:5432/postgres?host=/var/run/postgresql
+          value: {{ .Values.settings.users.super }}@:5432/postgres?host=/var/run/postgresql
         volumeMounts:
         - name: socket-directory
           mountPath: /var/run/postgresql
@@ -132,7 +131,7 @@ spec:
         image: "{{ .Values.image.repository }}-backup:{{ .Values.image.tag | default .Chart.AppVersion }}"
         env:
         - name: PATRONI_EXT_PGBACKREST_SCHEDULE
-          value: {{ .Values.backup.schedule }}
+          value: {{ .Values.settings.backup.schedule }}
         volumeMounts:
         - name: socket-directory
           mountPath: /var/run/postgresql
@@ -149,7 +148,7 @@ spec:
         image: "{{ .Values.image.repository }}-pgbouncer:{{ .Values.image.tag | default .Chart.AppVersion }}"
         env:
         - name: SUPERUSER_USERNAME
-          value: {{ .Values.superuserUsername }}
+          value: {{ .Values.settings.users.super }}
         - name: SUPERUSER_PASSWORD
           valueFrom: *superuserPassword
         ports:
@@ -183,7 +182,4 @@ spec:
               topologyKey: kubernetes.io/hostname
               labelSelector:
                 matchLabels: *memberLabels
-      {{- end }}
-      {{- with .Values.affinity }}
-        {{- toYaml . | nindent 8 }}
       {{- end }}

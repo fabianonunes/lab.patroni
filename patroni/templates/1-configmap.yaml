@@ -4,7 +4,7 @@ metadata:
   name: {{ include "patroni.fullname" . }}-config
 data:
   postgresql.conf: |
-    {{- .Values.postgresql.conf | nindent 4 }}
+    {{- (index .Values.settings "postgresql.conf") | nindent 4 }}
 
   pgbackrest.conf: |
-    {{- .Values.pgbackrest.config | nindent 4 }}
+    {{- (index .Values.settings "pgbackrest.conf") | nindent 4 }}

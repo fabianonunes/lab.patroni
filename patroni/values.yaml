@@ -1,13 +1,43 @@
+# This is to override the chart name.
+nameOverride: ""
+fullnameOverride: ""
+
+replicas: 2
+
+image:
+  repository: registry.boo.eth0.work/library/patroni
+  pullPolicy: IfNotPresent
+  tag: null
+
+storage:
+  pgdata:
+    class: "nfs-storage"
+    accessMode: ReadWriteOnce
+    size: 1Gi
+  repository:
+    class: "nfs-storage"
+    accessMode: ReadWriteOnce
+    size: 5Gi
+
 env: {}
-superuserUsername: postgres
-replicationUsername: replicator
 
-repository:
-  storageClass: "nfs-storage"
-  size: 1Gi
+nodeSelector: {}
 
-pgbackrest:
-  config: |
+distributePods: "hard"
+
+imagePullSecrets: []
+
+resources: {}
+
+settings:
+  users:
+    super: postgres
+    replication: replicator
+
+  backup:
+    schedule: "14 */3 * * *"
+
+  pgbackrest.conf: |
     [global]
     repo1-path=/var/lib/pgbackrest
     repo1-retention-full=2
@@ -26,8 +56,7 @@ pgbackrest:
     [global:restore]
     process-max=4
 
-postgresql:
-  conf: |
+  postgresql.conf: |
     # cpu
     # max_worker_processes = 7 # dcs only
     # max_connections = 150 # dcs only
@@ -57,65 +86,3 @@ postgresql:
     effective_io_concurrency = 300        # hdd=2, ssd=200, san=300
     checkpoint_completion_target = 0.9
     random_page_cost = 1.1
-
-storageClass: "nfs-storage"
-backup:
-  schedule: "14 */3 * * *"
-
-replicaCount: 1
-
-image:
-  repository: registry.boo.eth0.work/library/patroni
-  pullPolicy: Always
-  # tag: ""
-  tag: latest
-
-distributePods: "hard"
-
-imagePullSecrets: []
-# This is to override the chart name.
-nameOverride: ""
-fullnameOverride: ""
-
-# This is for setting Kubernetes Annotations to a Pod.
-# For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
-podAnnotations: {}
-# This is for setting Kubernetes Labels to a Pod.
-# For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
-podLabels: {}
-
-podSecurityContext: {}
-  # fsGroup: 2000
-
-securityContext: {}
-  # capabilities:
-  #   drop:
-  #   - ALL
-  # readOnlyRootFilesystem: true
-  # runAsNonRoot: true
-  # runAsUser: 1000
-
-# This is for setting up a service more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/
-service:
-  # This sets the service type more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
-  type: ClusterIP
-  # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
-  port: 80
-
-resources: {}
-  # We usually recommend not to specify default resources and to leave this as a conscious
-  # choice for the user. This also increases chances charts run on environments with little
-  # resources, such as Minikube. If you do want to specify resources, uncomment the following
-  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
-  # limits:
-  #   cpu: 100m
-  #   memory: 128Mi
-  # requests:
-  #   cpu: 100m
-  #   memory: 128Mi
-
-nodeSelector: {}
-
-tolerations: []
-
-affinity: {}

@@ -3,9 +3,8 @@ kind: PersistentVolumeClaim
 metadata:
   name: {{ include "patroni.fullname" . }}-repository
 spec:
-  storageClassName: {{ .Values.repository.storageClass }}
+  storageClassName: {{ .Values.storage.repository.class }}
+  accessModes: [{{ .Values.storage.repository.accessMode }}]
   resources:
     requests:
-      storage: {{ .Values.repository.size }}
-  accessModes:
-  - ReadWriteMany
+      storage: {{ .Values.storage.repository.size }}
