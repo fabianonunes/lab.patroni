@@ -1,0 +1,167 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: &fullName {{ include "patroni.fullname" . }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  serviceName: *fullName
+  selector:
+    matchLabels: &memberLabels
+      {{- include "patroni.memberLabels" . | nindent 6 }}
+
+  volumeClaimTemplates:
+  - metadata:
+      name: pgdata
+    spec:
+      storageClassName: {{ .Values.storageClass }}
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 50Gi
+
+  template:
+    metadata:
+      labels: *memberLabels
+
+    spec:
+      serviceAccountName: *fullName
+      terminationGracePeriodSeconds: 300
+
+      volumes:
+      - name: socket-directory
+        emptyDir: {}
+      - name: config
+        configMap:
+          name: {{ include "patroni.fullname" . }}-config
+      - name: repository
+        persistentVolumeClaim:
+          claimName: {{ include "patroni.fullname" . }}-repository
+
+      containers:
+      - name: patroni
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+
+        ports:
+        - containerPort: 8008
+        - containerPort: 5432
+
+        readinessProbe:
+          httpGet:
+            path: /readiness
+            port: 8008
+          initialDelaySeconds: 3
+          timeoutSeconds: 5
+
+        env:
+        - name: PATRONI_KUBERNETES_POD_IP
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+        - name: PATRONI_KUBERNETES_NAMESPACE
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.namespace
+        - name: PATRONI_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: metadata.name
+        - name: PATRONI_SCOPE
+          value: {{ .Release.Name }}
+        - name: PATRONI_KUBERNETES_USE_ENDPOINTS
+          value: "true"
+        - name: PATRONI_KUBERNETES_SCOPE_LABEL
+          value: app.kubernetes.io/cluster-name
+        - name: PATRONI_KUBERNETES_LABELS
+          value: {{ include "patroni.memberLabels" . | fromYaml | toJson | quote }}
+        - name: PATRONI_SUPERUSER_USERNAME
+          value: {{ .Values.superuserUsername }}
+        - name: PATRONI_REPLICATION_USERNAME
+          value: {{ .Values.replicationUsername }}
+        - name: PATRONI_SUPERUSER_PASSWORD
+          valueFrom: &superuserPassword
+            secretKeyRef:
+              name: *fullName
+              key: superuser-password
+        - name: PATRONI_REPLICATION_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: *fullName
+              key: replication-password
+        {{- with .Values.env }}
+        {{- toYaml . | nindent 8 }}
+        {{- end }}
+
+        volumeMounts:
+        - name: socket-directory
+          mountPath: /var/run/postgresql
+        - name: pgdata
+          mountPath: /var/lib/postgresql/data
+        - name: repository
+          mountPath: /var/lib/pgbackrest
+        - name: config
+          mountPath: /etc/patroni/postgresql.conf
+          subPath: postgresql.conf
+        - name: config
+          mountPath: /etc/pgbackrest.conf
+          subPath: pgbackrest.conf
+
+        {{- with .Values.resources }}
+        resources:
+          {{- toYaml . | nindent 10 }}
+        {{- end }}
+
+      - name: metrics
+        image: "{{ .Values.image.repository }}-metrics:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        ports:
+        - containerPort: 9187
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 9187
+          timeoutSeconds: 5 # TODO: precisa?
+        env:
+        - name: DATA_SOURCE_URI
+          value: {{ .Values.superuserUsername }}@:5432/postgres?host=/var/run/postgresql
+        volumeMounts:
+        - name: socket-directory
+          mountPath: /var/run/postgresql
+
+      - name: backup
+        image: "{{ .Values.image.repository }}-backup:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        env:
+        - name: PATRONI_EXT_PGBACKREST_SCHEDULE
+          value: {{ .Values.backup.schedule }}
+        volumeMounts:
+        - name: socket-directory
+          mountPath: /var/run/postgresql
+        - name: pgdata
+          mountPath: /var/lib/postgresql/data
+          readOnly: true
+        - name: repository
+          mountPath: /var/lib/pgbackrest
+        - name: config
+          mountPath: /etc/pgbackrest.conf
+          subPath: pgbackrest.conf
+
+      - name: pgbouncer
+        image: "{{ .Values.image.repository }}-pgbouncer:{{ .Values.image.tag | default .Chart.AppVersion }}"
+        env:
+        - name: SUPERUSER_USERNAME
+          value: {{ .Values.superuserUsername }}
+        - name: SUPERUSER_PASSWORD
+          valueFrom: *superuserPassword
+        ports:
+        - containerPort: 6432
+        volumeMounts:
+        - name: socket-directory
+          mountPath: /var/run/postgresql
+
+      affinity:
+        podAntiAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+          - labelSelector:
+              matchLabels: *memberLabels
+            topologyKey: kubernetes.io/hostname
+

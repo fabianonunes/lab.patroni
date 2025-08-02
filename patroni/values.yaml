@@ -1,0 +1,131 @@
+env: {}
+superuserUsername: postgres
+replicationUsername: replicator
+
+repository:
+  storageClass: "nfs-storage"
+  size: 1Gi
+
+pgbackrest:
+  config: |
+    [global]
+    repo1-path=/var/lib/pgbackrest
+    repo1-retention-full=2
+    repo1-retention-diff=7
+    archive-async=y
+    log-level-console=info
+    log-level-file=debug
+    compress-type=zst
+    repo1-block=y
+    repo1-bundle=y
+    start-fast=y
+
+    [main]
+    pg1-path=/var/lib/postgresql/data
+
+    [global:restore]
+    process-max=4
+
+postgresql:
+  conf: |
+    # cpu
+    # max_worker_processes = 7 # dcs only
+    # max_connections = 150 # dcs only
+    max_parallel_workers = 7
+    max_parallel_workers_per_gather = 4
+    max_parallel_maintenance_workers = 4
+
+    # ram
+    shared_buffers = 1536MB               # ~25% RAM
+    work_mem = 42509kB                    # 25% RAM / max_connections
+    maintenance_work_mem = 384MB          # ~5% RAM
+    effective_cache_size = 4608MB         # ~50% RAM
+    huge_pages = "off"
+
+    # wal
+    # wal_keep_size = 2GB # dcs restricted
+    min_wal_size = 1GB
+    max_wal_size = 4GB
+    wal_buffers = 16MB
+    wal_compression = lz4
+
+    # locks - para resolver "out of shared memory"
+    # max_locks_per_transaction = 256 # dcs only
+    max_pred_locks_per_transaction = 64
+
+    # outros
+    effective_io_concurrency = 300        # hdd=2, ssd=200, san=300
+    checkpoint_completion_target = 0.9
+    random_page_cost = 1.1
+
+storageClass: "nfs-storage"
+backup:
+  schedule: "14 */3 * * *"
+
+replicaCount: 1
+
+image:
+  repository: registry.boo.eth0.work/library/patroni
+  pullPolicy: Always
+  # tag: ""
+  tag: latest
+
+imagePullSecrets: []
+# This is to override the chart name.
+nameOverride: ""
+fullnameOverride: ""
+
+# This section builds out the service account more information can be found here: https://kubernetes.io/docs/concepts/security/service-accounts/
+serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  # Automatically mount a ServiceAccount's API credentials?
+  automount: true
+  # Annotations to add to the service account
+  annotations: {}
+  # The name of the service account to use.
+  # If not set and create is true, a name is generated using the fullname template
+  name: ""
+
+# This is for setting Kubernetes Annotations to a Pod.
+# For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/annotations/
+podAnnotations: {}
+# This is for setting Kubernetes Labels to a Pod.
+# For more information checkout: https://kubernetes.io/docs/concepts/overview/working-with-objects/labels/
+podLabels: {}
+
+podSecurityContext: {}
+  # fsGroup: 2000
+
+securityContext: {}
+  # capabilities:
+  #   drop:
+  #   - ALL
+  # readOnlyRootFilesystem: true
+  # runAsNonRoot: true
+  # runAsUser: 1000
+
+# This is for setting up a service more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/
+service:
+  # This sets the service type more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#publishing-services-service-types
+  type: ClusterIP
+  # This sets the ports more information can be found here: https://kubernetes.io/docs/concepts/services-networking/service/#field-spec-ports
+  port: 80
+
+resources: {}
+  # We usually recommend not to specify default resources and to leave this as a conscious
+  # choice for the user. This also increases chances charts run on environments with little
+  # resources, such as Minikube. If you do want to specify resources, uncomment the following
+  # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+  # limits:
+  #   cpu: 100m
+  #   memory: 128Mi
+  # requests:
+  #   cpu: 100m
+  #   memory: 128Mi
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

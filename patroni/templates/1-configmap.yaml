@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "patroni.fullname" . }}-config
+data:
+  postgresql.conf: |
+    {{- .Values.postgresql.conf | nindent 4 }}
+
+  pgbackrest.conf: |
+    {{- .Values.pgbackrest.config | nindent 4 }}

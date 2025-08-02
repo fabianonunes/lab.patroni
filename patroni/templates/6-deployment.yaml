@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "patroni.fullname" . }}
+spec:
+  selector:
+    matchLabels:
+      {{- include "patroni.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "patroni.labels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: shell
+          image: ghcr.io/fabianonunes/docker.shell
+          args:
+          - wait

@@ -1,0 +1,57 @@
+# headless service to avoid deletion of patronidemo-config endpoint
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "patroni.fullname" . }}-config
+spec:
+  clusterIP: None
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "patroni.fullname" . }}
+spec:
+  type: ClusterIP
+  clusterIP: None
+  ports:
+  - port: 5432
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "patroni.fullname" . }}-replicas
+spec:
+  type: ClusterIP
+  clusterIP: None
+  selector:
+    {{- include "patroni.selectorLabels" . | nindent 4 }}
+    role: replica
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: {{ include "patroni.fullname" . }}-pooler-lb
+# spec:
+#   type: LoadBalancer
+#   loadBalancerIP: 192.168.10.40
+#   externalTrafficPolicy: Local
+#   selector:
+#     {{- include "patroni.selectorLabels" . | nindent 4 }}
+#     role: primary
+#   ports:
+#   - port: 5432
+#     targetPort: 6432
+# ---
+# apiVersion: v1
+# kind: Service
+# metadata:
+#   name: {{ include "patroni.fullname" . }}-lb
+# spec:
+#   type: LoadBalancer
+#   loadBalancerIP: 192.168.10.41
+#   externalTrafficPolicy: Local
+#   selector:
+#     {{- include "patroni.selectorLabels" . | nindent 4 }}
+#     role: primary
+#   ports:
+#   - port: 5432
