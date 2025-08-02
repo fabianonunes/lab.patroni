@@ -41,19 +41,19 @@ ENTRYPOINT [ "pid1", "--" ]
 ### backup
 FROM base AS backup
 COPY --from=deps /go/bin/supercronic /usr/local/bin/
-COPY fs.backup /
+COPY fs/backup /
 USER postgres
 CMD [ "/entrypoint.sh" ]
 
 ### pgbouncer
 FROM base AS pgbouncer
 COPY --from=deps /go/bin/pgbouncer_exporter /usr/local/bin/
-COPY fs.pgbouncer /
+COPY fs/pgbouncer /
 USER postgres
 CMD [ "pgbouncer", "/etc/pgbouncer/pgbouncer.ini" ]
 
 ### patroni
 FROM custom AS patroni
-COPY fs.patroni /
+COPY fs/patroni /
 WORKDIR /etc/patroni
 CMD [ "/entrypoint.sh" ]
