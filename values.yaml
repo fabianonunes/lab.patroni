@@ -53,7 +53,6 @@ settings:
 
   pgbackrest.conf: |
     [global]
-    repo1-path=/var/lib/pgbackrest
     repo1-retention-full=2
     repo1-retention-diff=7
     archive-async=y
@@ -63,9 +62,6 @@ settings:
     repo1-block=y
     repo1-bundle=y
     start-fast=y
-
-    [main]
-    pg1-path=/var/lib/postgresql/data
 
     [global:restore]
     process-max=4
