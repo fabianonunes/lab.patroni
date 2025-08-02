@@ -88,9 +88,28 @@ spec:
             secretKeyRef:
               name: *fullName
               key: replication-password
-        {{- with .Values.env }}
-        {{- toYaml . | nindent 8 }}
-        {{- end }}
+
+        # Atributos controlados pelo Patroni
+        - name: PATRONI_EXT_MAX_CONNECTIONS
+          value: "{{ .Values.settings.bootstrap.max_connections }}"
+        - name: PATRONI_EXT_MAX_LOCKS_PER_TRANSACTION
+          value: "{{ .Values.settings.bootstrap.max_locks_per_transaction }}"
+        - name: PATRONI_EXT_MAX_WORKER_PROCESSES
+          value: "{{ .Values.settings.bootstrap.max_worker_processes }}"
+        - name: PATRONI_EXT_WAL_KEEP_SIZE
+          value: "{{ .Values.settings.bootstrap.wal_keep_size }}"
+        - name: PATRONI_EXT_MAX_PREPARED_TRANSACTIONS
+          value: "{{ .Values.settings.bootstrap.max_prepared_transactions }}"
+        - name: PATRONI_EXT_WAL_LEVEL
+          value: "{{ .Values.settings.bootstrap.wal_level }}"
+        - name: PATRONI_EXT_TRACK_COMMIT_TIMESTAMP
+          value: "{{ .Values.settings.bootstrap.track_commit_timestamp }}"
+        - name: PATRONI_EXT_MAX_WAL_SENDERS
+          value: "{{ .Values.settings.bootstrap.max_wal_senders }}"
+        - name: PATRONI_EXT_MAX_REPLICATION_SLOTS
+          value: "{{ .Values.settings.bootstrap.max_replication_slots }}"
+        - name: PATRONI_EXT_WAL_LOG_HINTS
+          value: "{{ .Values.settings.bootstrap.wal_log_hints }}"
 
         volumeMounts:
         - name: socket-directory

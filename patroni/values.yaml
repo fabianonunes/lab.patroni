@@ -19,8 +19,6 @@ storage:
     accessMode: ReadWriteOnce
     size: 5Gi
 
-env: {}
-
 nodeSelector: {}
 
 distributePods: "hard"
@@ -37,52 +35,23 @@ settings:
   backup:
     schedule: "14 */3 * * *"
 
+  bootstrap:
+    max_connections:
+    max_locks_per_transaction:
+    max_worker_processes:
+    wal_keep_size:
+    max_prepared_transactions:
+    wal_level:
+    track_commit_timestamp:
+    max_wal_senders:
+    max_replication_slots:
+    wal_log_hints:
+
   pgbackrest.conf: |
     [global]
     repo1-path=/var/lib/pgbackrest
-    repo1-retention-full=2
-    repo1-retention-diff=7
-    archive-async=y
-    log-level-console=info
-    log-level-file=debug
-    compress-type=zst
-    repo1-block=y
-    repo1-bundle=y
-    start-fast=y
 
     [main]
     pg1-path=/var/lib/postgresql/data
 
-    [global:restore]
-    process-max=4
-
-  postgresql.conf: |
-    # cpu
-    # max_worker_processes = 7 # dcs only
-    # max_connections = 150 # dcs only
-    max_parallel_workers = 7
-    max_parallel_workers_per_gather = 4
-    max_parallel_maintenance_workers = 4
-
-    # ram
-    shared_buffers = 1536MB               # ~25% RAM
-    work_mem = 42509kB                    # 25% RAM / max_connections
-    maintenance_work_mem = 384MB          # ~5% RAM
-    effective_cache_size = 4608MB         # ~50% RAM
-    huge_pages = "off"
-
-    # wal
-    # wal_keep_size = 2GB # dcs restricted
-    min_wal_size = 1GB
-    max_wal_size = 4GB
-    wal_buffers = 16MB
-    wal_compression = lz4
-
-    # locks - para resolver "out of shared memory"
-    # max_locks_per_transaction = 256 # dcs only
-    max_pred_locks_per_transaction = 64
-
-    # outros
-    effective_io_concurrency = 300        # hdd=2, ssd=200, san=300
-    checkpoint_completion_target = 0.9
-    random_page_cost = 1.1
+  postgresql.conf: ""
