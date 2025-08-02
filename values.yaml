@@ -1,5 +1,10 @@
 image:
   tag: latest
+  pullPolicy: Always
+
+storage:
+  repository:
+    class: nfs-storage
 
 resources:
   patroni:
