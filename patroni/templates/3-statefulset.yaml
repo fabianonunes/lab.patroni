@@ -124,7 +124,7 @@ spec:
           mountPath: /etc/patroni/postgresql.conf
           subPath: postgresql.conf
         - name: config
-          mountPath: /etc/pgbackrest.conf
+          mountPath: /etc/pgbackrest/conf.d/pgbackrest.conf
           subPath: pgbackrest.conf
 
         {{- with .Values.resources.patroni }}
@@ -164,7 +164,7 @@ spec:
         - name: repository
           mountPath: /var/lib/pgbackrest
         - name: config
-          mountPath: /etc/pgbackrest.conf
+          mountPath: /etc/pgbackrest/conf.d/pgbackrest.conf
           subPath: pgbackrest.conf
 
       - name: pgbouncer
