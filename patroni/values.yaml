@@ -34,7 +34,9 @@ settings:
     replication: replicator
 
   backup:
-    schedule: "14 */3 * * *"
+    schedule:
+      incremental:  "14 */3 * * *"
+      full:  "27 12 * * 7"
 
   bootstrap:
     max_connections:

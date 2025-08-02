@@ -151,8 +151,10 @@ spec:
       - name: backup
         image: "{{ .Values.image.repository }}-backup:{{ .Values.image.tag | default .Chart.AppVersion }}"
         env:
-        - name: PATRONI_EXT_PGBACKREST_SCHEDULE
-          value: {{ .Values.settings.backup.schedule }}
+        - name: PATRONI_EXT_PGBACKREST_INCREMENTAL_SCHEDULE
+          value: {{ .Values.settings.backup.schedule.incremental }}
+        - name: PATRONI_EXT_PGBACKREST_FULL_SCHEDULE
+          value: {{ .Values.settings.backup.schedule.full }}
         volumeMounts:
         - name: socket-directory
           mountPath: /var/run/postgresql

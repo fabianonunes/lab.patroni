@@ -5,4 +5,4 @@ if curl --silent --fail http://localhost:8008/replica; then
   exit 0
 fi
 
-pgbackrest --stanza=main backup
+pgbackrest --stanza=main backup "$@"
