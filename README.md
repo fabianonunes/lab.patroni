@@ -33,6 +33,3 @@ Qualquer mudança posterio deve ser feita via `patronictl edit-config` ou `kubec
 - backup full e incremental no cron
 - usar `patroni --generate-sample-config` para ver ser tem alguma config importante
   - vale a pena passar o parâmetro `password_encryption: scram-sha-256` no postgresql.conf?
-- quando usamos o restore com archive-get do pgbackrest significa que
-  a replicação não depende mais do postgresql? ou seja, o wal em pg_wal
-  não é mais necessário para a replicação?
