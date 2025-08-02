@@ -45,8 +45,8 @@ spec:
         - name: repository
           mountPath: /var/lib/pgbackrest
         - name: postgresql-config
-          mountPath: /etc/patroni/postgresql.parameters.yaml
-          subPath: postgresql.parameters.yaml
+          mountPath: /etc/patroni/postgresql.conf
+          subPath: postgresql.conf
         - name: postgresql-config
           mountPath: /etc/pgbackrest.conf
           subPath: pgbackrest.conf

@@ -73,7 +73,7 @@ postgresql:
   parameters:
     archive_mode: "on"
     archive_command: "pgbackrest --stanza=main archive-push %p"
-    {{- range $i, $v := (datasource "postgresql.parameters") }}
+    {{- range $i, $v := (datasource "postgresql.conf") }}
     {{ $i }}: {{ $v | quote }}
     {{- end }}
 

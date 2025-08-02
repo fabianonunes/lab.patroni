@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-gomplate --datasource postgresql.parameters=postgresql.parameters.yaml \
+gomplate --datasource postgresql.conf=postgresql.conf?type=application/x-env \
   --file patroni.yaml.tpl --out patroni.yaml
 
 unset PATRONI_SUPERUSER_PASSWORD PATRONI_REPLICATION_PASSWORD
